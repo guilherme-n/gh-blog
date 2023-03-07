@@ -1,24 +1,37 @@
 import { ArrowSquareOut, Buildings, GithubLogo, Users } from 'phosphor-react';
 import { useEffect, useState } from 'react';
 import { api } from '../../lib/api';
+import { Posts } from '../../types/posts';
 import { UserProfile } from '../../types/userProfile';
 import {
 	BlogContainer,
 	IconAndTextList,
 	NameAndLink,
 	ProfileContainer,
+	PublicationsCount,
+	SearchPostInput,
+	PostList,
+	Post,
 } from './styles';
+import { formatDistanceToNow } from 'date-fns';
 
 export function Home() {
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+	const [posts, setPosts] = useState<Posts | null>(null);
 
 	useEffect(() => {
 		fetchUserData();
+		fetchPostsData();
 	}, []);
 
 	async function fetchUserData() {
 		const { data } = await api.get('users/guilherme-n');
 		setUserProfile(data);
+	}
+
+	async function fetchPostsData() {
+		const { data } = await api.get('search/issues?q=repo:guilherme-n/gh-blog');
+		setPosts(data);
 	}
 
 	return (
@@ -41,20 +54,43 @@ export function Home() {
 								<GithubLogo weight='fill' size={18} /> {userProfile?.login}
 							</span>
 						</div>
+						{userProfile?.company && (
+							<div>
+								<span>
+									<Buildings weight='fill' size={18} /> {userProfile.company}
+								</span>
+							</div>
+						)}
 						<div>
 							<span>
-								<Buildings weight='fill' size={18} /> {userProfile?.company}
-							</span>
-						</div>
-						<div>
-							<span>
-								<Users weight='fill' size={18} /> {userProfile?.followers}
-								followers
+								<Users weight='fill' size={18} />
+								{`${userProfile?.followers} followers`}
 							</span>
 						</div>
 					</IconAndTextList>
 				</div>
 			</ProfileContainer>
+
+			<PublicationsCount>
+				<span>Publications</span>
+				<span>{posts?.total_count} publications</span>
+			</PublicationsCount>
+
+			<SearchPostInput placeholder='Search content' />
+
+			<PostList>
+				{posts?.items.map((post) => {
+					return (
+						<Post>
+							<div>
+								<span>{post.title}</span>
+								<span>{formatDistanceToNow(new Date(post.created_at))}</span>
+							</div>
+							<p>{post.body}</p>
+						</Post>
+					);
+				})}
+			</PostList>
 		</BlogContainer>
 	);
 }
