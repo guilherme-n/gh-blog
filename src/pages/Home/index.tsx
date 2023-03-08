@@ -1,6 +1,5 @@
 import { ArrowSquareOut, Buildings, GithubLogo, Users } from 'phosphor-react';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { api } from '../../lib/api';
 import {
 	BlogContainer,
 	IconAndTextList,
@@ -17,8 +16,8 @@ import { useUserProfile } from '../../contexts/userProfileContext';
 import { usePosts } from '../../contexts/postContext';
 
 export function Home() {
-	const { userProfile, setUserProfile } = useUserProfile();
-	const { posts, setPosts } = usePosts();
+	const { userProfile, fetchUserData } = useUserProfile();
+	const { posts, fetchPostsData } = usePosts();
 	const [query, setQuery] = useState('');
 
 	useEffect(() => {
@@ -26,27 +25,12 @@ export function Home() {
 		fetchPostsData();
 	}, []);
 
-	async function fetchUserData() {
-		const { data } = await api.get('users/guilherme-n');
-		setUserProfile(data);
-	}
-
-	async function fetchPostsData() {
-		const { data } = await api.get('search/issues?q=repo:guilherme-n/gh-blog');
-		setPosts(data);
-	}
-
 	function handleSearchPostText(event: ChangeEvent<HTMLInputElement>) {
 		setQuery(event.target.value);
 	}
 
 	useEffect(() => {
-		const funcId = setTimeout(async () => {
-			const { data } = await api.get(
-				`search/issues?q=${query}repo:guilherme-n/gh-blog`
-			);
-			setPosts(data);
-		}, 700);
+		const funcId = setTimeout(fetchPostsData, 700);
 
 		return () => {
 			clearTimeout(funcId);

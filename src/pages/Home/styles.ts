@@ -54,20 +54,16 @@ export const IconAndTextList = styled.div`
 	display: flex;
 	gap: 1.5rem;
 
-	& > div {
+	span {
 		display: flex;
 		align-items: center;
+		gap: 0.5rem;
 
-		span {
-			gap: 0.5rem;
-			line-height: 100%;
-			display: flex;
-			align-items: center;
-			color: ${(props) => props.theme.white};
+		line-height: 100%;
+		color: ${(props) => props.theme.white};
 
-			svg {
-				color: ${(props) => props.theme.label};
-			}
+		svg {
+			color: ${(props) => props.theme.label};
 		}
 	}
 `;
@@ -117,7 +113,7 @@ export const Post = styled.div`
 	height: 16.25rem;
 	overflow: hidden;
 
-	color: & > div {
+	& > div {
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: 1.25rem;
