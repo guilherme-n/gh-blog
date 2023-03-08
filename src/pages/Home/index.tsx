@@ -1,5 +1,5 @@
 import { ArrowSquareOut, Buildings, GithubLogo, Users } from 'phosphor-react';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
 import { Posts } from '../../types/posts';
 import { UserProfile } from '../../types/userProfile';
@@ -18,6 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 export function Home() {
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 	const [posts, setPosts] = useState<Posts | null>(null);
+	const [query, setQuery] = useState('');
 
 	useEffect(() => {
 		fetchUserData();
@@ -33,6 +34,24 @@ export function Home() {
 		const { data } = await api.get('search/issues?q=repo:guilherme-n/gh-blog');
 		setPosts(data);
 	}
+
+	function handleSearchPostText(event: ChangeEvent<HTMLInputElement>) {
+		setQuery(event.target.value);
+	}
+
+	useEffect(() => {
+		const funcId = setTimeout(async () => {
+			console.log('searching', query);
+			const { data } = await api.get(
+				`search/issues?q=${query}repo:guilherme-n/gh-blog`
+			);
+			setPosts(data);
+		}, 700);
+
+		return () => {
+			clearTimeout(funcId);
+		};
+	}, [query]);
 
 	return (
 		<BlogContainer>
@@ -76,12 +95,15 @@ export function Home() {
 				<span>{posts?.total_count} publications</span>
 			</PublicationsCount>
 
-			<SearchPostInput placeholder='Search content' />
+			<SearchPostInput
+				placeholder='Search content'
+				onChange={handleSearchPostText}
+			/>
 
 			<PostList>
 				{posts?.items.map((post) => {
 					return (
-						<Post>
+						<Post key={post.number}>
 							<div>
 								<span>{post.title}</span>
 								<span>{formatDistanceToNow(new Date(post.created_at))}</span>
