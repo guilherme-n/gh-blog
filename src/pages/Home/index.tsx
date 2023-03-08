@@ -1,8 +1,6 @@
 import { ArrowSquareOut, Buildings, GithubLogo, Users } from 'phosphor-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
-import { Posts } from '../../types/posts';
-import { UserProfile } from '../../types/userProfile';
 import {
 	BlogContainer,
 	IconAndTextList,
@@ -14,10 +12,13 @@ import {
 	Post,
 } from './styles';
 import { formatDistanceToNow } from 'date-fns';
+import { NavLink } from 'react-router-dom';
+import { useUserProfile } from '../../contexts/userProfileContext';
+import { usePosts } from '../../contexts/postContext';
 
 export function Home() {
-	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-	const [posts, setPosts] = useState<Posts | null>(null);
+	const { userProfile, setUserProfile } = useUserProfile();
+	const { posts, setPosts } = usePosts();
 	const [query, setQuery] = useState('');
 
 	useEffect(() => {
@@ -41,7 +42,6 @@ export function Home() {
 
 	useEffect(() => {
 		const funcId = setTimeout(async () => {
-			console.log('searching', query);
 			const { data } = await api.get(
 				`search/issues?q=${query}repo:guilherme-n/gh-blog`
 			);
@@ -103,13 +103,15 @@ export function Home() {
 			<PostList>
 				{posts?.items.map((post) => {
 					return (
-						<Post key={post.number}>
-							<div>
-								<span>{post.title}</span>
-								<span>{formatDistanceToNow(new Date(post.created_at))}</span>
-							</div>
-							<p>{post.body}</p>
-						</Post>
+						<NavLink to={`/post/${post.number}`} key={post.number}>
+							<Post>
+								<div>
+									<span>{post.title}</span>
+									<span>{formatDistanceToNow(new Date(post.created_at))}</span>
+								</div>
+								<p>{post.body}</p>
+							</Post>
+						</NavLink>
 					);
 				})}
 			</PostList>

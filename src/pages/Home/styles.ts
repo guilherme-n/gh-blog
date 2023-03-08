@@ -103,6 +103,11 @@ export const PostList = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 2rem;
+
+	a {
+		text-decoration: none;
+		color: ${(props) => props.theme.text};
+	}
 `;
 
 export const Post = styled.div`
@@ -112,7 +117,7 @@ export const Post = styled.div`
 	height: 16.25rem;
 	overflow: hidden;
 
-	& > div {
+	color: & > div {
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: 1.25rem;
