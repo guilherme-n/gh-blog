@@ -4,20 +4,20 @@ import { UserProfile } from '../types/userProfile';
 
 interface UserProfileProps {
 	userProfile: UserProfile | null;
-	fetchUserData: () => void;
+	fetchUser: () => void;
 }
 const UserProfileContext = createContext({} as UserProfileProps);
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
 	const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
-	async function fetchUserData() {
+	async function fetchUser() {
 		const { data } = await api.get('users/guilherme-n');
 		setUserProfile(data);
 	}
 
 	return (
-		<UserProfileContext.Provider value={{ userProfile, fetchUserData }}>
+		<UserProfileContext.Provider value={{ userProfile, fetchUser }}>
 			{children}
 		</UserProfileContext.Provider>
 	);

@@ -1,5 +1,5 @@
 import { ArrowSquareOut, Buildings, GithubLogo, Users } from 'phosphor-react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import {
 	BlogContainer,
 	IconAndTextList,
@@ -16,21 +16,21 @@ import { useUserProfile } from '../../contexts/userProfileContext';
 import { usePosts } from '../../contexts/postContext';
 
 export function Home() {
-	const { userProfile, fetchUserData } = useUserProfile();
-	const { posts, fetchPostsData } = usePosts();
+	const { userProfile, fetchUser } = useUserProfile();
+	const { posts, fetchPosts } = usePosts();
 	const [query, setQuery] = useState('');
 
 	useEffect(() => {
-		fetchUserData();
-		fetchPostsData();
+		if (!userProfile) fetchUser();
+		if (!posts) fetchPosts();
 	}, []);
 
 	function handleSearchPostText(event: ChangeEvent<HTMLInputElement>) {
 		setQuery(event.target.value);
 	}
 
-	useEffect(() => {
-		const funcId = setTimeout(fetchPostsData, 700);
+	useCallback(() => {
+		const funcId = setTimeout(fetchPosts, 700);
 
 		return () => {
 			clearTimeout(funcId);

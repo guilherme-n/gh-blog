@@ -19,13 +19,12 @@ import { formatDistanceToNow } from 'date-fns';
 
 export function Post() {
 	const { postId } = useParams();
-	const { userProfile, fetchUserData } = useUserProfile();
-	const { posts } = usePosts();
+	const { userProfile, fetchUser } = useUserProfile();
+	const { posts, fetchPosts } = usePosts();
 
 	useEffect(() => {
-		if (!userProfile) {
-			fetchUserData();
-		}
+		if (!userProfile) fetchUser();
+		if (!posts) fetchPosts();
 	}, []);
 
 	const post = posts?.items.find((p) => p.number.toString() === postId);

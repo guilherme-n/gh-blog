@@ -4,14 +4,14 @@ import { Posts } from '../types/posts';
 
 interface PostProps {
 	posts: Posts | null;
-	fetchPostsData: (query?: string) => void;
+	fetchPosts: (query?: string) => void;
 }
 const PostContext = createContext({} as PostProps);
 
 export function PostProvider({ children }: { children: ReactNode }) {
 	const [posts, setPosts] = useState<Posts | null>(null);
 
-	async function fetchPostsData(query: string = '') {
+	async function fetchPosts(query: string = '') {
 		const { data } = await api.get(
 			`search/issues?q=${query}repo:guilherme-n/gh-blog`
 		);
@@ -19,7 +19,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<PostContext.Provider value={{ posts, fetchPostsData }}>
+		<PostContext.Provider value={{ posts, fetchPosts }}>
 			{children}
 		</PostContext.Provider>
 	);
